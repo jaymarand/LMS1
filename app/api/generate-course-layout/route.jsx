@@ -4,7 +4,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import {
     GoogleGenAI,
 } from '@google/genai';
-import axios from 'axios';
+import OpenAI from 'openai';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
@@ -106,22 +106,15 @@ export async function POST(req) {
 
 
 const GenerateImage = async (imagePrompt) => {
-    const BASE_URL = 'https://aigurulab.tech';
-    const result = await axios.post(BASE_URL + '/api/generate-image',
-        {
-            width: 1024,
-            height: 1024,
-            input: imagePrompt,
-            model: 'flux',//'flux'
-            aspectRatio: "16:9"//Applicable to Flux model only
-        },
-        {
-            headers: {
-                'x-api-key': process?.env?.AI_GURU_LAB_API, // Your API Key
-                'Content-Type': 'application/json', // Content Type
-            },
-        })
-    console.log(result.data.image) //Output Result: Base 64 Image
-    return result.data.image;
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    // Use OpenAI Images API to generate a 1024x1024 image from the prompt
+    const resp = await client.images.generate({
+        model: 'gpt-image-1',
+        prompt: imagePrompt,
+        size: '1024x1024',
+        // response_format defaults to b64_json; we use that to keep Base64 storage behavior
+    });
+    const b64 = resp.data?.[0]?.b64_json;
+    return b64 || '';
 }
 

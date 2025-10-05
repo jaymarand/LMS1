@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate --config=drizzle.config.js",
+    "db:push": "drizzle-kit push --config=drizzle.config.js",
+    "db:migrate": "tsx scripts/migrate.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.19.2",
@@ -27,6 +30,7 @@
     "lucide-react": "^0.509.0",
     "mime": "^4.0.7",
     "next": "15.2.5",
+    "openai": "^6.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-markdown": "^8.0.6",
