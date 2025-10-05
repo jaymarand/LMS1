@@ -22,35 +22,42 @@ An online learning platform built with Next.js App Router. It uses Clerk for aut
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in values:
 
 ```bash
 cp .env.example .env
 ```
 
-Required variables:
-
-- `DATABASE_URL` – Postgres connection string (Neon works well)
-- `GEMINI_API_KEY` – Google Generative AI key
-- `YOUTUBE_API_KEY` – YouTube Data API v3 key
-- `AI_GURU_LAB_API` – AIGuruLab image generation API key
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` – Clerk publishable key
-- `CLERK_SECRET_KEY` – Clerk secret key
+    31→Required variables:
+    32→
+    33→- `DATABASE_URL` – Postgres connection string (Neon works well)
+    34→- `GEMINI_API_KEY` – Google Generative AI key
+    35→- `YOUTUBE_API_KEY` – YouTube Data API v3 key
+    36→- `OPENAI_API_KEY` – OpenAI API key for image generation (gpt-image-1)
+    37→- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` – Clerk publishable key
+    38→- `CLERK_SECRET_KEY` – Clerk secret key
 
 References in code:
 
 - `config/db.jsx` uses `DATABASE_URL`
-- `app/api/generate-course-layout/route.jsx` uses `GEMINI_API_KEY` and `AI_GURU_LAB_API`
+- `app/api/generate-course-layout/route.jsx` uses `GEMINI_API_KEY` and `OPENAI_API_KEY`
 - `app/api/generate-course-content/route.jsx` uses `YOUTUBE_API_KEY`
 - `middleware.js`/`app/layout.js` rely on Clerk configuration
 
-## Install
+    47→## Image Generation
+
+    The app now uses OpenAI Images (`gpt-image-1`) to generate course banner images, replacing the former AIGuruLab integration.
+
+    - Set `OPENAI_API_KEY` in your `.env`.
+    - Banners are stored as Base64 strings in the `bannerImageUrl` column (see `config/schema.js`).
+    - Code path: `app/api/generate-course-layout/route.jsx` → `GenerateImage()`.
+
+    If you previously set `AI_GURU_LAB_API`, it is no longer used and can be removed.
+
+    ## Install
 
 ```bash
 npm install
 ```
-
-## Database
 
 - Make sure your `DATABASE_URL` is set and the target database is reachable (Neon often requires `sslmode=require`).
 - Define schema is in `config/schema.js`. This project does not include migrations; create tables according to the schema or add Drizzle Kit migrations as needed.
